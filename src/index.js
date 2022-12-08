@@ -2,6 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
+import { router } from './routes/routes';
+
 //1- Inicializamos express
 const app = express();
 
@@ -13,6 +15,7 @@ app.use(morgan('dev'));
 app.use(cors());
 
 //4- Rutas
+app.use(router);
 
 //5- Loop del servidor
 app.listen(app.get('PORT'), () => {
