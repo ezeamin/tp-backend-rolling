@@ -1,9 +1,16 @@
 import express from 'express';
 
-import { getHome } from '../controllers/getControllers';
+import { getHome, getUsers } from '../controllers/getControllers';
+import { postUser } from '../controllers/postControllers';
 
 export const router = express.Router();
 
 // path, callback a ejecutar cuando se haga esta peticion
 // request, response
+
+// GET ---------------------------
 router.get('/', getHome);
+router.get('/users', getUsers);
+
+// POST ---------------------------
+router.post('/user', postUser);
