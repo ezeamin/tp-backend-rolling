@@ -5,7 +5,7 @@ import { postUser } from '../controllers/postControllers';
 
 export const router = express.Router();
 
-// path, callback a ejecutar cuando se haga esta peticion
+// path (endpoint), callback a ejecutar cuando se haga esta peticion
 // request, response
 
 // GET ---------------------------

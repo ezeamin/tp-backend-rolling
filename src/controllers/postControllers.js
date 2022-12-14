@@ -11,7 +11,7 @@ export const postUser = async (req, res) => {
   });
 
   try {
-    const result = await newUser.save();
+    await newUser.save();
 
     res.json({
       message: 'Usuario creado exitosamente',

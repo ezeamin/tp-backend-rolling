@@ -19,12 +19,12 @@ app.set('PORT', process.env.PORT || 5000);
 //3- Middlewares
 app.use(morgan('dev'));
 app.use(cors());
-app.use(express.json())    // <==== parse request body as JSON
+app.use(express.json());    // <==== parse request body as JSON
 
 //4- Rutas
 app.use(router);
 
 //5- Loop del servidor
 app.listen(app.get('PORT'), () => {
-  console.log(`Servidor ejecutandose en ${app.get('PORT')}`);
+  console.log(`Servidor ejecutandose en puerto ${app.get('PORT')}`);
 });
