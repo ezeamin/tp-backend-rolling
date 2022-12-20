@@ -10,7 +10,9 @@ import { postProducts, postUser } from '../controllers/postControllers';
 import { deleteProduct } from '../controllers/deleteController';
 import { putProduct } from '../controllers/putControllers';
 
-export const router = express.Router();
+import { isAuthenticated } from '../middlewares/isAuthenticated';
+
+export const routerProducts = express.Router();
 
 // path (endpoint), callback a ejecutar cuando se haga esta peticion
 // request, response
@@ -18,15 +20,15 @@ export const router = express.Router();
 // GET ---------------------------
 // router.get('/', getHome);
 // router.get('/users', getUsers);
-router.get('/products', getProducts);
-router.get('/product/:id', getProduct);
+routerProducts.get('/products', isAuthenticated, getProducts);
+routerProducts.get('/product/:id', isAuthenticated, getProduct);
 
 // POST ---------------------------
 // router.post('/user', postUser);
-router.post('/product', postProducts);
+routerProducts.post('/product', isAuthenticated, postProducts);
 
 // PUT ----------------------------
-router.put('/product/:id', putProduct);
+routerProducts.put('/product/:id', isAuthenticated, putProduct);
 
 // DELETE -------------------------
-router.delete('/product/:id', deleteProduct);
+routerProducts.delete('/product/:id', isAuthenticated, deleteProduct);
