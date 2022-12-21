@@ -20,8 +20,8 @@ export const routerProducts = express.Router();
 // GET ---------------------------
 // router.get('/', getHome);
 // router.get('/users', getUsers);
-routerProducts.get('/products', isAuthenticated, getProducts);
-routerProducts.get('/product/:id', isAuthenticated, getProduct);
+routerProducts.get('/products', getProducts);
+routerProducts.get('/product/:id', getProduct);
 
 // POST ---------------------------
 // router.post('/user', postUser);

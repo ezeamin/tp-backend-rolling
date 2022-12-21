@@ -99,17 +99,10 @@ export const postLogin = async (req, res) => {
 
   // 2- Validar las credenciales
   // username incorrecto
-  if (!user) {
-    res.status(404).json({
-      message: 'Usuario no encontrado',
-    });
-    return;
-  }
-
   // Comparo contraseñas (contraseña incorrecta)
-  if (!bcrypt.compareSync(req.body.password, user.password)) {
-    res.status(401).json({
-      message: 'Contraseña incorrecta',
+  if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
+    res.status(404).json({
+      message: 'Usuario o contraseña no valida(s)',
     });
     return;
   }
