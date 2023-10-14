@@ -1,34 +1,47 @@
 import express from 'express';
 
 import {
-  getHome,
   getProduct,
   getProducts,
-  getUsers,
-} from '../controllers/getControllers';
-import { postProducts, postUser } from '../controllers/postControllers';
-import { deleteProduct } from '../controllers/deleteController';
-import { putProduct } from '../controllers/putControllers';
+  postProduct,
+  deleteProduct,
+  putProduct,
+} from '../controllers/productControllers.js';
 
-import { isAuthenticated } from '../middlewares/isAuthenticated';
+import isAuthenticated from '../middlewares/isAuthenticated.js';
+import validateBody from '../middlewares/validateBody.js';
 
-export const routerProducts = express.Router();
+import {
+  post_productSchema,
+  put_productSchema,
+} from '../helpers/validationSchemas/productSchemas.js';
+
+const routerProducts = express.Router();
 
 // path (endpoint), callback a ejecutar cuando se haga esta peticion
 // request, response
 
 // GET ---------------------------
-// router.get('/', getHome);
-// router.get('/users', getUsers);
 routerProducts.get('/products', getProducts);
 routerProducts.get('/product/:id', getProduct);
 
 // POST ---------------------------
-// router.post('/user', postUser);
-routerProducts.post('/product', isAuthenticated, postProducts);
+routerProducts.post(
+  '/product',
+  isAuthenticated,
+  (req, res, next) => validateBody(req, res, next, post_productSchema),
+  postProduct,
+);
 
 // PUT ----------------------------
-routerProducts.put('/product/:id', isAuthenticated, putProduct);
+routerProducts.put(
+  '/product/:id',
+  isAuthenticated,
+  (req, res, next) => validateBody(req, res, next, put_productSchema),
+  putProduct,
+);
 
 // DELETE -------------------------
 routerProducts.delete('/product/:id', isAuthenticated, deleteProduct);
+
+export default routerProducts;

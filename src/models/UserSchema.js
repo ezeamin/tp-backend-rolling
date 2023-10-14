@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 
-const { Schema } = mongoose;
-
-const userSchema = new Schema({
-  id: Number,
+const userSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   name: String,
-  lastName: {
+  lastname: {
     type: String,
     required: true,
   },

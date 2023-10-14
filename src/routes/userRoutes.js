@@ -1,12 +1,31 @@
 import express from 'express';
-import { getUsers } from '../controllers/getControllers';
 
-import { postUser } from '../controllers/postControllers';
+import { getUsers, postUser } from '../controllers/userControllers.js';
 
-export const routerUsers = express.Router();
+import validateBody from '../middlewares/validateBody.js';
 
-// POST -----------
-routerUsers.post('/user', postUser);
+import {
+  post_userSchema,
+  put_userSchema,
+} from '../helpers/validationSchemas/userSchemas.js';
+
+const routerUsers = express.Router();
 
 // GET -----------
 routerUsers.get('/users', getUsers);
+
+// POST -----------
+routerUsers.post(
+  '/user',
+  (req, res, next) => validateBody(req, res, next, post_userSchema),
+  postUser,
+);
+
+// PUT -----------
+routerUsers.put(
+  '/user',
+  (req, res, next) => validateBody(req, res, next, put_userSchema),
+  postUser,
+);
+
+export default routerUsers;

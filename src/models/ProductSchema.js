@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 
-const { Schema } = mongoose;
-
-const productSchema = new Schema({
-  id: Number,
+const productSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   name: String,
   price: Number,
   image: String,

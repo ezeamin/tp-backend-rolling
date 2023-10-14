@@ -1,7 +1,18 @@
 import express from 'express';
 
-import { postLogin } from '../controllers/postControllers';
+import { postLogin } from '../controllers/authControllers.js';
 
-export const routerAuth = express.Router();
+import validateBody from '../middlewares/validateBody.js';
 
-routerAuth.post('/login', postLogin);
+import { post_loginSchema } from '../helpers/validationSchemas/authSchemas.js';
+
+const routerAuth = express.Router();
+
+// POST ---------------------------
+routerAuth.post(
+  '/login',
+  (req, res, next) => validateBody(req, res, next, post_loginSchema),
+  postLogin,
+);
+
+export default routerAuth;

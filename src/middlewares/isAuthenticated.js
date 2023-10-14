@@ -2,17 +2,18 @@ import jwt from 'jsonwebtoken';
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
-export const isAuthenticated = (req, res, next) => {
-  const headers = req.headers;
-  const authHeader = headers.authorization; //string
+const isAuthenticated = (req, res, next) => {
+  const { headers } = req;
+  const authHeader = headers.authorization; // string
 
-  if(!authHeader) {
-    res.status(403).json({
+  if (!authHeader) {
+    res.status(401).json({
       message: 'Token no valido o expirado',
     });
     return;
   }
 
+  // Separo el "Bearer" del token
   const token = authHeader.split(' ')[1];
 
   try {
@@ -20,13 +21,14 @@ export const isAuthenticated = (req, res, next) => {
 
     req.user = tokenInfo;
 
-    //token valido
+    // token valido
     next();
   } catch (err) {
     // token no valido
-    res.status(403).json({
+    res.status(401).json({
       message: 'Token no valido o expirado',
     });
-    return;
   }
 };
+
+export default isAuthenticated;
