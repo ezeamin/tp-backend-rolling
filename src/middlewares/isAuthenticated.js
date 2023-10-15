@@ -8,7 +8,7 @@ const isAuthenticated = (req, res, next) => {
 
   if (!authHeader) {
     res.status(401).json({
-      message: 'Token no valido o expirado',
+      message: 'Token no detectado en el header "Authorization"',
     });
     return;
   }

@@ -4,8 +4,7 @@
   "description": "Rolling backend",
   "main": "src/index.js",
   "scripts": {
-    "build": "babel src/index.js -d dist",
-    "start": "babel-node src/index.js",
+    "start": "babel-node --env-file=.env src/index.js",
     "dev": "nodemon --exec babel-node --env-file=.env src/index.js"
   },
   "keywords": [

@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5000;
 // 3- Middlewares
 app.use(morgan('dev'));
 app.use(cors());
-app.use(express.json()); // <==== parse request body as JSON
+app.use(express.json()); // <==== Parsear el body como JSON
 
 // 4- Rutas
 app.use('/api/v1/products', routerProducts);
