@@ -1,19 +1,68 @@
 import bcrypt from 'bcrypt';
 
-import { generateRandomId } from '../helpers/helpers.js';
-
 import UserDb from '../models/UserSchema.js';
 
 // ----------------------------
 // GET
 // ----------------------------
 
-export const getUsers = async (req, res) => {
-  const data = await UserDb.find();
+// El "_" es un parámetro que no se usa (sería el req), pero que se pone para que no de error
+export const getUsers = async (_, res) => {
+  try {
+    const data = await UserDb.find();
 
-  res.json({
-    data,
-  });
+    // remove password from response
+    const filteredData = data.map((user) => ({
+      ...user._doc,
+      password: undefined,
+    }));
+
+    res.json({
+      data: filteredData,
+    });
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        message: `ERROR: ${err}`,
+      },
+    });
+  }
+};
+
+export const getUser = async (req, res) => {
+  const params = req.params || {};
+  const { id } = params;
+
+  if (!id) {
+    res.status(400).json({
+      message: 'Falta el id del usuario',
+    });
+    return;
+  }
+
+  try {
+    const data = await UserDb.findOne({ _id: id });
+
+    if (!data) {
+      res.status(404).json({
+        message: 'Usuario no encontrado',
+      });
+      return;
+    }
+
+    // remove password from response
+    data.password = undefined;
+
+    res.json({
+      data,
+    });
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        message: `ERROR: ${err}`,
+      },
+    });
+  }
 };
 
 // ----------------------------
@@ -28,7 +77,6 @@ export const postUser = async (req, res) => {
   const cryptedPassword = bcrypt.hashSync(password, 10);
 
   const newUser = new UserDb({
-    id: generateRandomId(),
     name: body.name,
     lastname: body.lastname,
     username: body.username,
@@ -43,6 +91,13 @@ export const postUser = async (req, res) => {
       message: 'Usuario creado exitosamente',
     });
   } catch (err) {
+    if (err.message.includes('duplicate')) {
+      res.status(400).json({
+        message: `El usuario con username "${body.username}" ya existe`,
+      });
+      return;
+    }
+
     res.status(500).json({
       errors: {
         message: `ERROR: ${err}`,
@@ -69,15 +124,62 @@ export const putUser = async (req, res) => {
   }
 
   try {
-    await UserDb.findOneAndUpdate(
-      {
-        id,
-      },
-      body,
-    );
+    const action = await UserDb.updateOne({ _id: id }, body);
+
+    if (action.modifiedCount === 0) {
+      res.status(404).json({
+        message: 'Usuario no encontrado',
+      });
+      return;
+    }
 
     res.json({
       message: 'Usuario actualizado exitosamente',
+    });
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        message: `ERROR: ${err}`,
+      },
+    });
+  }
+};
+
+// ----------------------------
+// DELETE
+// ----------------------------
+
+// Only change isActive property
+export const deleteUser = async (req, res) => {
+  const params = req.params || {};
+  const { id } = params;
+
+  if (!id) {
+    res.status(400).json({
+      message: 'Falta el id del usuario',
+    });
+    return;
+  }
+
+  try {
+    const action = await UserDb.updateOne(
+      {
+        _id: id,
+      },
+      {
+        isActive: false,
+      },
+    );
+
+    if (action.matchedCount === 0) {
+      res.status(404).json({
+        message: 'Usuario no encontrado',
+      });
+      return;
+    }
+
+    res.json({
+      message: 'Usuario eliminado exitosamente',
     });
   } catch (err) {
     res.status(500).json({

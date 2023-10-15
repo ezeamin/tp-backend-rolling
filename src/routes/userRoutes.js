@@ -1,6 +1,12 @@
 import express from 'express';
 
-import { getUsers, postUser } from '../controllers/userControllers.js';
+import {
+  deleteUser,
+  getUser,
+  getUsers,
+  postUser,
+  putUser,
+} from '../controllers/userControllers.js';
 
 import validateBody from '../middlewares/validateBody.js';
 
@@ -12,20 +18,24 @@ import {
 const routerUsers = express.Router();
 
 // GET -----------
-routerUsers.get('/users', getUsers);
+routerUsers.get('/', getUsers);
+routerUsers.get('/:id', getUser);
 
 // POST -----------
 routerUsers.post(
-  '/user',
+  '/',
   (req, res, next) => validateBody(req, res, next, post_userSchema),
   postUser,
 );
 
 // PUT -----------
 routerUsers.put(
-  '/user',
+  '/:id',
   (req, res, next) => validateBody(req, res, next, put_userSchema),
-  postUser,
+  putUser,
 );
+
+// DELETE -----------
+routerUsers.delete('/:id', deleteUser);
 
 export default routerUsers;

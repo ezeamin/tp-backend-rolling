@@ -22,12 +22,12 @@ const routerProducts = express.Router();
 // request, response
 
 // GET ---------------------------
-routerProducts.get('/products', getProducts);
-routerProducts.get('/product/:id', getProduct);
+routerProducts.get('/', getProducts);
+routerProducts.get('/:id', getProduct);
 
 // POST ---------------------------
 routerProducts.post(
-  '/product',
+  '/',
   isAuthenticated,
   (req, res, next) => validateBody(req, res, next, post_productSchema),
   postProduct,
@@ -35,13 +35,13 @@ routerProducts.post(
 
 // PUT ----------------------------
 routerProducts.put(
-  '/product/:id',
+  '/:id',
   isAuthenticated,
   (req, res, next) => validateBody(req, res, next, put_productSchema),
   putProduct,
 );
 
 // DELETE -------------------------
-routerProducts.delete('/product/:id', isAuthenticated, deleteProduct);
+routerProducts.delete('/:id', isAuthenticated, deleteProduct);
 
 export default routerProducts;

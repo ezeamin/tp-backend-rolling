@@ -21,9 +21,9 @@ app.use(cors());
 app.use(express.json()); // <==== parse request body as JSON
 
 // 4- Rutas
-app.use(routerProducts);
-app.use(routerAuth);
-app.use(routerUsers);
+app.use('/api/v1/products', routerProducts);
+app.use('/api/v1/auth', routerAuth);
+app.use('/api/v1/users', routerUsers);
 
 // 5- Loop del servidor
 app.listen(PORT, () => {

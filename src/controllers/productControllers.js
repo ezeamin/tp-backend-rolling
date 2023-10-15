@@ -1,15 +1,22 @@
 import ProductsDb from '../models/ProductSchema.js';
 
-import { generateRandomId } from '../helpers/helpers.js';
-
 // ----------------------------
 // GET
 // ----------------------------
 
-export const getProducts = async (req, res) => {
-  const data = await ProductsDb.find();
+// El "_" es un parámetro que no se usa (sería el req), pero que se pone para que no de error
+export const getProducts = async (_, res) => {
+  try {
+    const data = await ProductsDb.find();
 
-  res.json(data);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        message: `ERROR: ${err}`,
+      },
+    });
+  }
 };
 
 export const getProduct = async (req, res) => {
@@ -24,13 +31,19 @@ export const getProduct = async (req, res) => {
     return;
   }
 
-  const data = await ProductsDb.findOne({
-    id,
-  });
+  try {
+    const data = await ProductsDb.findOne({ _id: id });
 
-  res.json({
-    data,
-  });
+    res.json({
+      data,
+    });
+  } catch (err) {
+    res.status(500).json({
+      errors: {
+        message: `ERROR: ${err}`,
+      },
+    });
+  }
 };
 
 // ----------------------------
@@ -41,11 +54,11 @@ export const postProduct = async (req, res) => {
   const { body } = req;
 
   const newProduct = new ProductsDb({
-    id: generateRandomId(),
     name: body.name,
     price: body.price,
     description: body.description,
     image: body.image,
+    isActive: true,
   });
 
   try {
@@ -84,13 +97,19 @@ export const putProduct = async (req, res) => {
 
   try {
     // filter,newData,options
-    const updated = await ProductsDb.findOneAndUpdate({ id }, body, {
+    const action = await ProductsDb.updateOne({ _id: id }, body, {
       new: true,
     });
 
+    if (action.matchedCount === 0) {
+      res.status(404).json({
+        message: 'Producto no encontrado',
+      });
+      return;
+    }
+
     res.json({
       message: 'Producto actualizado',
-      updatedProduct: updated,
     });
   } catch (err) {
     res.status(500).json({
@@ -117,11 +136,17 @@ export const deleteProduct = async (req, res) => {
   }
 
   try {
-    const deleted = await ProductsDb.findOneAndDelete({ id });
+    const action = await ProductsDb.updateOne({ _id: id }, { isActive: false });
+
+    if (action.matchedCount === 0) {
+      res.status(404).json({
+        message: 'Producto no encontrado',
+      });
+      return;
+    }
 
     res.json({
       message: 'Producto eliminado',
-      deletedProduct: deleted,
     });
   } catch (err) {
     res.status(500).json({
