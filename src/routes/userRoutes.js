@@ -8,7 +8,6 @@ import {
   putUser,
 } from '../controllers/userControllers.js';
 
-import isAdmin from '../middlewares/isAdmin.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import validateBody from '../middlewares/validateBody.js';
 
@@ -27,7 +26,6 @@ routerUsers.get('/:id', isAuthenticated, getUser);
 routerUsers.post(
   '/',
   isAuthenticated,
-  isAdmin,
   (req, res, next) => validateBody(req, res, next, post_userSchema),
   postUser,
 );
@@ -36,12 +34,11 @@ routerUsers.post(
 routerUsers.put(
   '/:id',
   isAuthenticated,
-  isAdmin,
   (req, res, next) => validateBody(req, res, next, put_userSchema),
   putUser,
 );
 
 // DELETE -----------
-routerUsers.delete('/:id', isAuthenticated, isAdmin, deleteUser);
+routerUsers.delete('/:id', isAuthenticated, deleteUser);
 
 export default routerUsers;

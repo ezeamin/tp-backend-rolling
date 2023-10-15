@@ -6,8 +6,14 @@ import UserDb from '../models/UserSchema.js';
 // GET
 // ----------------------------
 
-// El "_" es un parámetro que no se usa (sería el req), pero que se pone para que no de error
-export const getUsers = async (_, res) => {
+export const getUsers = async (req, res) => {
+  if (!req.user.isAdmin) {
+    res.status(403).json({
+      message: 'No tienes permisos para realizar esta acción',
+    });
+    return;
+  }
+
   try {
     const data = await UserDb.find();
 
@@ -30,12 +36,20 @@ export const getUsers = async (_, res) => {
 };
 
 export const getUser = async (req, res) => {
-  const params = req.params || {};
-  const { id } = params;
+  const { params } = req || {};
+  const { id } = params || {};
 
   if (!id) {
     res.status(400).json({
       message: 'Falta el id del usuario',
+    });
+    return;
+  }
+
+  // Solo puedes ver tu propio perfil o si eres admin todos
+  if (id !== req.user._id && !req.user.isAdmin) {
+    res.status(403).json({
+      message: 'No tienes permisos para realizar esta acción',
     });
     return;
   }
@@ -76,13 +90,16 @@ export const postUser = async (req, res) => {
 
   const cryptedPassword = bcrypt.hashSync(password, 10);
 
+  // Solo los admins pueden crear admins
+  const canBeAdmin = req.user.isAdmin ? body.isAdmin : false;
+
   const newUser = new UserDb({
     name: body.name,
     lastname: body.lastname,
     username: body.username,
     password: cryptedPassword,
     isActive: true,
-    isAdmin: body.isAdmin || false,
+    isAdmin: canBeAdmin || false,
   });
 
   try {
@@ -112,16 +129,27 @@ export const postUser = async (req, res) => {
 // ----------------------------
 
 export const putUser = async (req, res) => {
-  const params = req.params || {};
-  const { body } = req;
-
-  const { id } = params;
+  const { params, body } = req || {};
+  const { id } = params || {};
 
   if (!id) {
     res.status(400).json({
       message: 'Falta el id del usuario',
     });
     return;
+  }
+
+  // Solo puedes editar tu propio perfil o si eres admin todos
+  if (id !== req.user._id && !req.user.isAdmin) {
+    res.status(403).json({
+      message: 'No tienes permisos para realizar esta acción',
+    });
+    return;
+  }
+
+  if (body.password) {
+    const cryptedPassword = bcrypt.hashSync(body.password, 10);
+    body.password = cryptedPassword;
   }
 
   try {
@@ -152,12 +180,20 @@ export const putUser = async (req, res) => {
 
 // Only change isActive property
 export const deleteUser = async (req, res) => {
-  const params = req.params || {};
-  const { id } = params;
+  const { params } = req || {};
+  const { id } = params || {};
 
   if (!id) {
     res.status(400).json({
       message: 'Falta el id del usuario',
+    });
+    return;
+  }
+
+  // Solo puedes eliminar tu propio perfil o si eres admin todos
+  if (id !== req.user._id && !req.user.isAdmin) {
+    res.status(403).json({
+      message: 'No tienes permisos para realizar esta acción',
     });
     return;
   }

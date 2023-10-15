@@ -35,11 +35,11 @@ La tabla a continuación detalla los endpoints de cada servicio disponible:
 Ruta principal: `/api/v1/users`
 | Método | Endpoint | Protegido | Debe ser Admin | Descripción | Body |
 | ------ | -------- | --------- | -------------- | ----------- | ---- |
-| GET | `/` | ✅ | ✅ | Obtiene todos los usuarios | - |
-| GET | `/:id` | ✅ | ✅ | Obtiene un usuario por su id | - |
-| POST | `/` | ✅ | ✅ | Crea un nuevo usuario | `{ isAdmin?: boolean, lastname: string, name: string, password: string, username: string }` |
-| PUT | `/:id` | ✅ | ✅ | Actualiza un usuario por su id | `{ isAdmin?: boolean, lastname?: string, name?: string, password?: string, username?: string }` |
-| DELETE | `/:id` | ✅ | ✅ | Elimina un usuario por su id (borrado lógico) | - |
+| GET | `/` | ✅ | ❌ | Obtiene todos los usuarios | - |
+| GET | `/:id` | ✅ | ❌ | Obtiene un usuario por su id | - |
+| POST | `/` | ✅ | ❌ | Crea un nuevo usuario | `{ isAdmin?: boolean, lastname: string, name: string, password: string, username: string }` |
+| PUT | `/:id` | ✅ | ❌ | Actualiza un usuario por su id | `{ isAdmin?: boolean, lastname?: string, name?: string, password?: string, username?: string }` |
+| DELETE | `/:id` | ✅ | ❌ | Elimina un usuario por su id (borrado lógico) | - |
 
 #### Autenticación:
 

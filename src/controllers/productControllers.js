@@ -21,8 +21,8 @@ export const getProducts = async (_, res) => {
 
 export const getProduct = async (req, res) => {
   // params es lo que viene dentro del endpoint como dato (ver ruta de endpoint)
-  const params = req.params || {};
-  const { id } = params;
+  const { params } = req || {};
+  const { id } = params || {};
 
   if (!id) {
     res.status(400).json({
@@ -82,8 +82,8 @@ export const postProduct = async (req, res) => {
 
 export const putProduct = async (req, res) => {
   // Traemos el id del producto a actualizar
-  const params = req.params || {};
-  const { id } = params;
+  const { params } = req || {};
+  const { id } = params || {};
 
   if (!id) {
     res.status(400).json({
@@ -125,8 +125,8 @@ export const putProduct = async (req, res) => {
 // ----------------------------
 
 export const deleteProduct = async (req, res) => {
-  const params = req.params || {};
-  const { id } = params;
+  const { params } = req || {};
+  const { id } = params || {};
 
   if (!id) {
     res.status(400).json({
