@@ -51,6 +51,58 @@ export const post_userSchema = Joi.object({
       'string.max': 'El campo "password" debe tener maximo 30 caracteres',
       'any.required': 'El campo "password" es obligatorio',
     }),
+  isAdmin: Joi.boolean().messages({
+    'boolean.base': 'El campo "isAdmin" debe ser un booleano',
+    '*': 'Revisa el campo "isAdmin"',
+  }),
 });
 
-export const put_userSchema = post_userSchema;
+// copy post validation but remove "required" option
+export const put_userSchema = Joi.object({
+  name: Joi.string().trim().min(3).max(30)
+    .messages({
+      'string.empty': 'El campo "name" no puede estar vacio',
+      'string.min': 'El campo "name" debe tener al menos 3 caracteres',
+      'string.max': 'El campo "name" debe tener maximo 30 caracteres',
+      '*': 'Revisa el campo "name"',
+    }),
+  lastname: Joi.string().trim().min(3).max(30)
+    .messages({
+      'string.empty': 'El campo "lastname" no puede estar vacio',
+      'string.min': 'El campo "lastname" debe tener al menos 3 caracteres',
+      'string.max': 'El campo "lastname" debe tener maximo 30 caracteres',
+      '*': 'Revisa el campo "lastname"',
+    }),
+  username: Joi.string().trim().min(3).max(30)
+    .messages({
+      'string.empty': 'El campo "username" no puede estar vacio',
+      'string.min': 'El campo "username" debe tener al menos 3 caracteres',
+      'string.max': 'El campo "username" debe tener maximo 30 caracteres',
+      '*': 'Revisa el campo "username"',
+    }),
+  password: Joi.string()
+    .trim()
+    .min(3)
+    .max(30)
+    .custom((value, helper) => {
+      // should have at least one number, one letter and one special character
+      const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/;
+
+      if (!value.match(regex)) {
+        return helper.message(
+          'El campo "password" debe tener al menos un numero, una letra y un caracter especial',
+        );
+      }
+
+      return true;
+    })
+    .messages({
+      'string.empty': 'El campo "password" no puede estar vacio',
+      'string.min': 'El campo "password" debe tener al menos 3 caracteres',
+      'string.max': 'El campo "password" debe tener maximo 30 caracteres',
+    }),
+  isAdmin: Joi.boolean().messages({
+    'boolean.base': 'El campo "isAdmin" debe ser un booleano',
+    '*': 'Revisa el campo "isAdmin"',
+  }),
+});

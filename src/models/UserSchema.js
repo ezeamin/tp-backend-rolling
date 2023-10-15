@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   isActive: Boolean,
+  isAdmin: Boolean,
 });
 
 export default mongoose.model('Users', userSchema);

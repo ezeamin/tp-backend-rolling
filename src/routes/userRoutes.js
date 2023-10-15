@@ -8,6 +8,8 @@ import {
   putUser,
 } from '../controllers/userControllers.js';
 
+import isAdmin from '../middlewares/isAdmin.js';
+import isAuthenticated from '../middlewares/isAuthenticated.js';
 import validateBody from '../middlewares/validateBody.js';
 
 import {
@@ -18,12 +20,14 @@ import {
 const routerUsers = express.Router();
 
 // GET -----------
-routerUsers.get('/', getUsers);
-routerUsers.get('/:id', getUser);
+routerUsers.get('/', isAuthenticated, getUsers);
+routerUsers.get('/:id', isAuthenticated, getUser);
 
 // POST -----------
 routerUsers.post(
   '/',
+  isAuthenticated,
+  isAdmin,
   (req, res, next) => validateBody(req, res, next, post_userSchema),
   postUser,
 );
@@ -31,11 +35,13 @@ routerUsers.post(
 // PUT -----------
 routerUsers.put(
   '/:id',
+  isAuthenticated,
+  isAdmin,
   (req, res, next) => validateBody(req, res, next, put_userSchema),
   putUser,
 );
 
 // DELETE -----------
-routerUsers.delete('/:id', deleteUser);
+routerUsers.delete('/:id', isAuthenticated, isAdmin, deleteUser);
 
 export default routerUsers;

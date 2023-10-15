@@ -82,6 +82,7 @@ export const postUser = async (req, res) => {
     username: body.username,
     password: cryptedPassword,
     isActive: true,
+    isAdmin: body.isAdmin || false,
   });
 
   try {

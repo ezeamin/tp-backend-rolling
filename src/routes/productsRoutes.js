@@ -8,6 +8,7 @@ import {
   putProduct,
 } from '../controllers/productControllers.js';
 
+import isAdmin from '../middlewares/isAdmin.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import validateBody from '../middlewares/validateBody.js';
 
@@ -29,6 +30,7 @@ routerProducts.get('/:id', getProduct);
 routerProducts.post(
   '/',
   isAuthenticated,
+  isAdmin,
   (req, res, next) => validateBody(req, res, next, post_productSchema),
   postProduct,
 );
@@ -37,11 +39,12 @@ routerProducts.post(
 routerProducts.put(
   '/:id',
   isAuthenticated,
+  isAdmin,
   (req, res, next) => validateBody(req, res, next, put_productSchema),
   putProduct,
 );
 
 // DELETE -------------------------
-routerProducts.delete('/:id', isAuthenticated, deleteProduct);
+routerProducts.delete('/:id', isAuthenticated, isAdmin, deleteProduct);
 
 export default routerProducts;
