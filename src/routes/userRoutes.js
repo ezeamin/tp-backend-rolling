@@ -8,6 +8,7 @@ import {
   putUser,
 } from '../controllers/userControllers.js';
 
+import isAdmin from '../middlewares/isAdmin.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 import validateBody from '../middlewares/validateBody.js';
 
@@ -19,7 +20,7 @@ import {
 const routerUsers = express.Router();
 
 // GET -----------
-routerUsers.get('/', isAuthenticated, getUsers);
+routerUsers.get('/', isAuthenticated, isAdmin, getUsers);
 routerUsers.get('/:id', isAuthenticated, getUser);
 
 // POST -----------
