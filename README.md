@@ -1,6 +1,6 @@
 # Backend de ejemplo
 
-Descripción corta de tu proyecto.
+Descripción corta del proyecto.
 
 ## Requisitos
 
@@ -58,3 +58,7 @@ Ruta principal: `/api/v1/products`
 | POST | `/` | ✅ | ✅ | Crea un nuevo producto | `{ description: string, image: string, name: string, price: number  }` |
 | PUT | `/:id` | ✅ | ✅ | Actualiza un producto por su id | `{ description?: string, image?: string, name?: string, price?: number  }` |
 | DELETE | `/:id` | ✅ | ✅ | Elimina un producto por su id (borrado lógico) | - |
+
+## Equipo
+
+- [Ezequiel Amin](https://github.com/ezeamin)
