@@ -1,5 +1,5 @@
 {
-  "name": "miprimerbackend",
+  "name": "express-backend-example",
   "version": "1.0.0",
   "description": "Rolling backend",
   "main": "src/index.js",
