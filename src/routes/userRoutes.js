@@ -26,7 +26,6 @@ routerUsers.get('/:id', isAuthenticated, getUser);
 // POST -----------
 routerUsers.post(
   '/',
-  isAuthenticated,
   (req, res, next) => validateBody(req, res, next, post_userSchema),
   postUser,
 );

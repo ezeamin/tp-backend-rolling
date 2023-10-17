@@ -45,10 +45,6 @@ export const post_userSchema = Joi.object({
       'string.max': 'El campo "password" debe tener maximo 30 caracteres',
       'any.required': 'El campo "password" es obligatorio',
     }),
-  isAdmin: Joi.boolean().messages({
-    'boolean.base': 'El campo "isAdmin" debe ser un booleano',
-    '*': 'Revisa el campo "isAdmin"',
-  }),
 });
 
 // copy post validation but remove "required" option

@@ -90,16 +90,13 @@ export const postUser = async (req, res) => {
 
   const cryptedPassword = bcrypt.hashSync(password, 10);
 
-  // Solo los admins pueden crear admins
-  const canBeAdmin = req.user.isAdmin ? body.isAdmin : false;
-
   const newUser = new UserDb({
     name: body.name,
     lastname: body.lastname,
     username: body.username,
     password: cryptedPassword,
     isActive: true,
-    isAdmin: canBeAdmin || false,
+    isAdmin: false,
   });
 
   try {
