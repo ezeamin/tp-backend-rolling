@@ -6,7 +6,7 @@ Descripción corta del proyecto.
 
 Asegúrate de tener Node.js 20.6+ instalado en tu máquina, y una cuenta de MongoDB para conectar con una DB propia, hosteada o local.
 
-- [Node.js](https://nodejs.org/en/) -> Importante: Debe ser 20.6+ para que funcione el archivo .env
+- [Node.js](https://nodejs.org/en/) -> Importante: Debe ser 20.6+ para que funcione el archivo `.env`
 - [MongoDB](https://www.mongodb.com/)
 
 ## Instalación
