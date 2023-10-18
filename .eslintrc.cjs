@@ -11,4 +11,5 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-underscore-dangle': 'off',
   },
+  ignorePatterns: ['**/node_modules/**', '**/dist/**'],
 };
