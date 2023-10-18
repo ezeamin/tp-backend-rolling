@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "esbuild src/index.js --bundle --platform=node --outfile=dist/index.cjs --minify",
-    "start": "node --env-file=.env dist/index.cjs",
+    "start": "node --env-file=.env ../dist/index.cjs",
     "dev": "nodemon --exec node --env-file=.env src/index.js"
   },
   "keywords": [
