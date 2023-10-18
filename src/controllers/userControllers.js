@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 import UserDb from '../models/UserSchema.js';
 
