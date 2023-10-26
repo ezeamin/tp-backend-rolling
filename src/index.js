@@ -5,9 +5,8 @@ import cors from 'cors';
 // importamos la conexion a la DB
 import './database/database.js';
 
-import routerProducts from './routes/productsRoutes.js';
-import routerAuth from './routes/authRoutes.js';
-import routerUsers from './routes/userRoutes.js';
+import routerEj1 from './routes/ejercicio1.js';
+import routerEj3 from './routes/ejercicio3.js';
 
 // 1- Inicializamos express
 const app = express();
@@ -21,9 +20,8 @@ app.use(cors());
 app.use(express.json()); // <==== Parsear el body como JSON
 
 // 4- Rutas
-app.use('/api/v1/products', routerProducts);
-app.use('/api/v1/auth', routerAuth);
-app.use('/api/v1/users', routerUsers);
+app.use('/api/v1/ejercicio-1', routerEj1);
+app.use('/api/v1/ejercicio-3', routerEj3);
 
 // 5- Loop del servidor
 app.listen(PORT, () => {
