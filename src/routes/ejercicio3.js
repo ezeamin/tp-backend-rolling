@@ -12,11 +12,11 @@ import validateBody from '../middlewares/validateBody.js';
 import validateParams from '../middlewares/validateParams.js';
 
 import {
-  delete_params_colorShema,
-  get_params_colorShema,
+  delete_params_colorSchema,
+  get_params_colorSchema,
   post_colorSchema,
   put_colorSchema,
-  put_params_colorShema,
+  put_params_colorSchema,
 } from '../helpers/validationSchemas/colorSchemas.js';
 
 const routerColors = express.Router();
@@ -25,7 +25,7 @@ const routerColors = express.Router();
 routerColors.get('/', getColors);
 routerColors.get(
   '/:id',
-  (req, res, next) => validateParams(req, res, next, get_params_colorShema),
+  (req, res, next) => validateParams(req, res, next, get_params_colorSchema),
   getColor,
 );
 
@@ -39,7 +39,7 @@ routerColors.post(
 // PUT ----------------------------
 routerColors.put(
   '/:id',
-  (req, res, next) => validateParams(req, res, next, put_params_colorShema),
+  (req, res, next) => validateParams(req, res, next, put_params_colorSchema),
   (req, res, next) => validateBody(req, res, next, put_colorSchema),
   putColor,
 );
@@ -47,7 +47,7 @@ routerColors.put(
 // DELETE -------------------------
 routerColors.delete(
   '/:id',
-  (req, res, next) => validateParams(req, res, next, delete_params_colorShema),
+  (req, res, next) => validateParams(req, res, next, delete_params_colorSchema),
   deleteColor,
 );
 

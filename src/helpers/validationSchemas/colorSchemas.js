@@ -94,7 +94,7 @@ export const put_colorSchema = Joi.object({
 // PARAMS
 // ----------------------------
 
-export const get_params_colorShema = Joi.object({
+export const get_params_colorSchema = Joi.object({
   id: Joi.string().required().trim().length(24)
     .messages({
       'string.empty': 'El parámetro "id" no puede estar vacio',
@@ -105,5 +105,5 @@ export const get_params_colorShema = Joi.object({
 });
 
 // Son iguales al anterior
-export const put_params_colorShema = get_params_colorShema;
-export const delete_params_colorShema = get_params_colorShema;
+export const put_params_colorSchema = get_params_colorSchema;
+export const delete_params_colorSchema = get_params_colorSchema;

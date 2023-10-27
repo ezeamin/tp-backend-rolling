@@ -1,18 +1,18 @@
-import ColorsDb from '../models/ColorSchema.js';
+import BlogsDb from '../../models/BlogSchema.js';
 
 // ----------------------------
 // GET
 // ----------------------------
 
 // El "_" es un parámetro que no se usa (sería el req), pero que se pone para que no de error
-export const getColors = async (_, res) => {
+export const getBlogs = async (_, res) => {
   try {
-    const data = await ColorsDb.find();
+    const data = await BlogsDb.find();
 
     // Devolvemos un objeto con la data para que siempre sea un objeto lo que viaja al FE
     res.json({
       data,
-      message: data.length > 0 ? 'Colores encontrados' : 'Listado vacío',
+      message: data.length > 0 ? 'Blogs encontrados' : 'Listado vacío',
     });
   } catch (err) {
     res.status(500).json({
@@ -21,18 +21,18 @@ export const getColors = async (_, res) => {
   }
 };
 
-export const getColor = async (req, res) => {
+export const getBlog = async (req, res) => {
   // params es lo que viene dentro del endpoint como dato (ver ruta de endpoint)
   const {
     params: { id },
   } = req;
 
   try {
-    const data = await ColorsDb.findOne({ _id: id });
+    const data = await BlogsDb.findOne({ _id: id });
 
     res.json({
       data,
-      message: data ? 'Color encontrado' : 'Color no encontrado',
+      message: data ? 'Blog encontrado' : 'Blog no encontrado',
     });
   } catch (err) {
     res.status(500).json({
@@ -48,19 +48,19 @@ export const getColor = async (req, res) => {
 // POST
 // ----------------------------
 
-export const postColor = async (req, res) => {
+export const postBlog = async (req, res) => {
   const { body } = req;
 
-  const newProduct = new ColorsDb({
-    name: body.name,
-    hex: body.hex,
-    rgb: body.rgb,
+  const newProduct = new BlogsDb({
+    title: body.title,
+    'image-url': body['image-url'],
+    content: body.content,
   });
 
   try {
     await newProduct.save();
 
-    res.json({ data: null, message: 'Color creado exitosamente' });
+    res.json({ data: null, message: 'Blog creado exitosamente' });
   } catch (err) {
     res.status(500).json({
       errors: {
@@ -75,7 +75,7 @@ export const postColor = async (req, res) => {
 // PUT
 // ----------------------------
 
-export const putColor = async (req, res) => {
+export const putBlog = async (req, res) => {
   // Traemos el id y los datos del blog a actualizar
   const {
     params: { id },
@@ -84,16 +84,16 @@ export const putColor = async (req, res) => {
 
   try {
     // filter,newData,options
-    const action = await ColorsDb.updateOne({ _id: id }, body, {
+    const action = await BlogsDb.updateOne({ _id: id }, body, {
       new: true,
     });
 
     if (action.matchedCount === 0) {
-      res.status(404).json({ data: null, message: 'Color no encontrado' });
+      res.status(404).json({ data: null, message: 'Blog no encontrado' });
       return;
     }
 
-    res.json({ data: null, message: 'Color actualizado' });
+    res.json({ data: null, message: 'Blog actualizado' });
   } catch (err) {
     res.status(500).json({
       errors: { data: null, message: `ERROR: ${err}` },
@@ -105,20 +105,20 @@ export const putColor = async (req, res) => {
 // DELETE
 // ----------------------------
 
-export const deleteColor = async (req, res) => {
+export const deleteBlog = async (req, res) => {
   const {
     params: { id },
   } = req;
 
   try {
-    const action = await ColorsDb.deleteOne({ _id: id });
+    const action = await BlogsDb.deleteOne({ _id: id });
 
     if (action.matchedCount === 0) {
-      res.status(404).json({ data: null, message: 'Color no encontrado' });
+      res.status(404).json({ data: null, message: 'Blog no encontrado' });
       return;
     }
 
-    res.json({ data: null, message: 'Color eliminado' });
+    res.json({ data: null, message: 'Blog eliminado' });
   } catch (err) {
     res.status(500).json({
       errors: { data: null, message: `ERROR: ${err}` },
