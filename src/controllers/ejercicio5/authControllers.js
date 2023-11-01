@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-import UserDb from '../../models/UserSchema.js';
+import UserModel from '../../models/UserSchema.js';
 
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
@@ -13,9 +13,10 @@ export const postLogin = async (req, res) => {
   const { body } = req;
 
   try {
-    // 1- Intentar buscar el usuario en la DB
-    const user = await UserDb.findOne({
+    // 1- Intentar buscar el usuario en la DB (debe estar activo)
+    const user = await UserModel.findOne({
       username: body.username,
+      isActive: true,
     });
 
     // 2- Validar las credenciales
@@ -36,6 +37,7 @@ export const postLogin = async (req, res) => {
     const userInfo = {
       ...user._doc,
       password: undefined,
+      isActive: undefined,
     };
 
     // payload, secretKey, options
@@ -50,10 +52,8 @@ export const postLogin = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-import UserDb from '../../models/UserSchema.js';
+import UserModel from '../../models/UserSchema.js';
 
 // ----------------------------
 // GET
@@ -8,7 +8,7 @@ import UserDb from '../../models/UserSchema.js';
 
 export const getUsers = async (_, res) => {
   try {
-    const data = await UserDb.find();
+    const data = await UserModel.find();
 
     // remove password from response
     const filteredData = data.map((user) => ({
@@ -18,14 +18,13 @@ export const getUsers = async (_, res) => {
 
     res.json({
       data: filteredData,
-      message: 'Usuarios encontrados',
+      message:
+        filteredData.length > 0 ? 'Usuarios encontrados' : 'Listado vacío',
     });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -33,18 +32,20 @@ export const getUsers = async (_, res) => {
 export const getUser = async (req, res) => {
   const {
     params: { id },
+    user,
   } = req;
 
   // Solo puedes ver tu propio perfil o si eres admin todos
-  if (id !== req.user._id && !req.user.isAdmin) {
+  if (id !== user._id && !user.isAdmin) {
     res.status(403).json({
+      data: null,
       message: 'No tienes permisos para realizar esta acción',
     });
     return;
   }
 
   try {
-    const data = await UserDb.findOne({ _id: id });
+    const data = await UserModel.findOne({ _id: id });
 
     if (!data) {
       res.status(404).json({
@@ -63,10 +64,8 @@ export const getUser = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -79,10 +78,9 @@ export const postUser = async (req, res) => {
   const { body } = req;
 
   const { password } = body;
-
   const cryptedPassword = bcrypt.hashSync(password, 10);
 
-  const newUser = new UserDb({
+  const newUser = new UserModel({
     firstname: body.firstname,
     lastname: body.lastname,
     username: body.username,
@@ -108,10 +106,8 @@ export const postUser = async (req, res) => {
     }
 
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -124,11 +120,13 @@ export const putUser = async (req, res) => {
   const {
     params: { id },
     body,
+    user,
   } = req;
 
   // Solo puedes editar tu propio perfil o si eres admin todos
-  if (id !== req.user._id && !req.user.isAdmin) {
+  if (id !== user._id && !user.isAdmin) {
     res.status(403).json({
+      data: null,
       message: 'No tienes permisos para realizar esta acción',
     });
     return;
@@ -140,7 +138,7 @@ export const putUser = async (req, res) => {
   }
 
   try {
-    const action = await UserDb.updateOne({ _id: id }, body);
+    const action = await UserModel.updateOne({ _id: id }, body);
 
     if (action.modifiedCount === 0) {
       res.status(404).json({
@@ -156,10 +154,8 @@ export const putUser = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -172,27 +168,30 @@ export const putUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   const {
     params: { id },
+    user,
   } = req;
 
   // Solo puedes eliminar tu propio perfil o si eres admin todos
-  if (id !== req.user._id && !req.user.isAdmin) {
+  if (id !== user._id && !user.isAdmin) {
     res.status(403).json({
+      data: null,
       message: 'No tienes permisos para realizar esta acción',
     });
     return;
   }
 
   try {
-    const action = await UserDb.updateOne(
+    const action = await UserModel.updateOne(
       {
         _id: id,
+        isActive: true,
       },
       {
         isActive: false,
       },
     );
 
-    if (action.matchedCount === 0) {
+    if (action.modifiedCount === 0) {
       res.status(404).json({
         data: null,
         message: 'Usuario no encontrado',
@@ -206,10 +205,8 @@ export const deleteUser = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };

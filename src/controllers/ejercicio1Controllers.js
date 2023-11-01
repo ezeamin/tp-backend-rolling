@@ -1,4 +1,4 @@
-import TasksDb from '../models/TaskSchema.js';
+import TasksModel from '../models/TaskSchema.js';
 
 // ----------------------------
 // GET
@@ -7,7 +7,7 @@ import TasksDb from '../models/TaskSchema.js';
 // El "_" es un parámetro que no se usa (sería el req), pero que se pone para que no de error
 export const getTasks = async (_, res) => {
   try {
-    const data = await TasksDb.find();
+    const data = await TasksModel.find({ isActive: true });
 
     // Devolvemos un objeto con la data para que siempre sea un objeto lo que viaja al FE
     res.json({
@@ -27,41 +27,39 @@ export const getTasks = async (_, res) => {
 // Solucion 1 (más eficiente):
 export const getFilteredTasks = async (req, res) => {
   // params es lo que viene dentro del endpoint como dato (ver ruta de endpoint)
-  const { params } = req;
-  const { value } = params;
+  const {
+    params: { value },
+  } = req;
 
   // Determinar si es un id o un texto
   const isId = value.length === 24;
   const query = isId
-    ? { _id: value }
-    : { title: { $regex: value, $options: 'i' } }; // utilizamos un regex para que encuentre coincidencias parciales
+    ? { _id: value, isActive: true }
+    : { title: { $regex: value, $options: 'i' }, isActive: true }; // utilizamos un regex para que encuentre coincidencias parciales
 
   try {
     // devuelve un arreglo vacio, o con uno o más elementos (con id devuelve 1)
-    const data = await TasksDb.find(query);
+    const data = await TasksModel.find(query);
 
     res.json({
       data,
       message: data.length > 0 ? 'Tareas encontradas' : 'Listado vacío',
     });
   } catch (err) {
-    res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
-    });
+    res.status(500).json({ data: null, message: `ERROR: ${err}` });
   }
 };
 
 // Solucion 2 (menos eficiente):
 // export const getFilteredTasks = async (req, res) => {
 //   // params es lo que viene dentro del endpoint como dato (ver ruta de endpoint)
-//   const { params } = req;
-//   const { value } = params;
+//   const { params: { value } } = req;
 
 //   // Determinar si es un id o un texto
 //   const isId = value.length === 24;
 
 //   try {
-//     const data = await TasksDb.find({});
+//     const data = await TasksDb.find({isActive: true});
 
 //     // filtrar dentro de los resultados
 //     const filteredData = data.filter((task) => {
@@ -72,13 +70,12 @@ export const getFilteredTasks = async (req, res) => {
 
 //     res.json({
 //       data: filteredData,
+//       message: filteredData.length > 0 ? 'Tareas encontradas' : 'Listado vacío',
 //     });
 //   } catch (err) {
 //     res.status(500).json({
-//       errors: {
-//         data: null,
-//         message: `ERROR: ${err}`,
-//       },
+//       data: null,
+//       message: `ERROR: ${err}`,
 //     });
 //   }
 // };
@@ -90,19 +87,22 @@ export const getFilteredTasks = async (req, res) => {
 export const postTask = async (req, res) => {
   const { body } = req;
 
-  const newProduct = new TasksDb({
+  const newProduct = new TasksModel({
     title: body.title,
+    isActive: true,
   });
 
   try {
     await newProduct.save();
 
     res.json({
+      data: null,
       message: 'Tarea creada exitosamente',
     });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -112,30 +112,29 @@ export const postTask = async (req, res) => {
 // ----------------------------
 
 export const putTask = async (req, res) => {
-  // Traemos el id de la tarea a actualizar
-  const { params } = req;
-  const { id } = params;
-
-  // Traemos el contenido (nuevos datos)
-  const { body } = req;
+  // Traemos el id y body de la tarea a actualizar
+  const {
+    params: { id },
+    body,
+  } = req;
 
   try {
-    // filter,newData,options
-    const action = await TasksDb.updateOne({ _id: id }, body, {
-      new: true,
-    });
+    // filter,newData
+    const action = await TasksModel.updateOne({ _id: id }, body);
 
-    if (action.matchedCount === 0) {
+    if (action.modifiedCount === 0) {
       res.status(404).json({ data: null, message: 'Tarea no encontrada' });
       return;
     }
 
     res.json({
+      data: null,
       message: 'Tarea actualizada',
     });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -145,13 +144,17 @@ export const putTask = async (req, res) => {
 // ----------------------------
 
 export const deleteTask = async (req, res) => {
-  const { params } = req;
-  const { id } = params;
+  const {
+    params: { id },
+  } = req;
 
   try {
-    const action = await TasksDb.deleteOne({ _id: id });
+    const action = await TasksModel.updateOne(
+      { _id: id, isActive: true },
+      { isActive: false },
+    );
 
-    if (action.matchedCount === 0) {
+    if (action.modifiedCount === 0) {
       res.status(404).json({ data: null, message: 'Tarea no encontrada' });
       return;
     }
@@ -159,7 +162,8 @@ export const deleteTask = async (req, res) => {
     res.json({ data: null, message: 'Tarea eliminada' });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };

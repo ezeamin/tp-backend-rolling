@@ -37,23 +37,17 @@ export const post_userSchema = Joi.object({
     .trim()
     .min(8)
     .max(15)
-    .custom((value, helper) => {
-      // should have at least one number, one letter and one special character
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/;
-
-      if (!value.match(regex)) {
-        return helper.message(
-          'El campo "password" debe tener al menos un numero, una letra y un caracter especial',
-        );
-      }
-
-      return true;
-    })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/,
+    )
     .messages({
       'string.empty': 'El campo "password" no puede estar vacio',
       'string.min': 'El campo "password" debe tener al menos 8 caracteres',
       'string.max': 'El campo "password" debe tener maximo 15 caracteres',
       'any.required': 'El campo "password" es obligatorio',
+      'string.pattern.base':
+        'El campo "password" debe tener al menos un numero, una letra y un caracter especial',
+      '*': 'Revisa el campo "password"',
     }),
 });
 
@@ -84,22 +78,16 @@ export const put_userSchema = Joi.object({
     .trim()
     .min(8)
     .max(15)
-    .custom((value, helper) => {
-      // should have at least one number, one letter and one special character
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/;
-
-      if (!value.match(regex)) {
-        return helper.message(
-          'El campo "password" debe tener al menos un numero, una letra y un caracter especial',
-        );
-      }
-
-      return true;
-    })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/,
+    )
     .messages({
       'string.empty': 'El campo "password" no puede estar vacio',
       'string.min': 'El campo "password" debe tener al menos 8 caracteres',
       'string.max': 'El campo "password" debe tener maximo 15 caracteres',
+      'string.pattern.base':
+        'El campo "password" debe tener al menos un numero, una letra y un caracter especial',
+      '*': 'Revisa el campo "password"',
     }),
   isAdmin: Joi.boolean().messages({
     'boolean.base': 'El campo "isAdmin" debe ser un booleano',

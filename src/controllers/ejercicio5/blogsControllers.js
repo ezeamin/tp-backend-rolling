@@ -1,4 +1,4 @@
-import BlogsDb from '../../models/BlogSchema.js';
+import BlogsModel from '../../models/BlogSchema.js';
 
 // ----------------------------
 // GET
@@ -7,7 +7,7 @@ import BlogsDb from '../../models/BlogSchema.js';
 // El "_" es un parámetro que no se usa (sería el req), pero que se pone para que no de error
 export const getBlogs = async (_, res) => {
   try {
-    const data = await BlogsDb.find();
+    const data = await BlogsModel.find({ isActive: true });
 
     // Devolvemos un objeto con la data para que siempre sea un objeto lo que viaja al FE
     res.json({
@@ -16,7 +16,8 @@ export const getBlogs = async (_, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -28,7 +29,7 @@ export const getBlog = async (req, res) => {
   } = req;
 
   try {
-    const data = await BlogsDb.findOne({ _id: id });
+    const data = await BlogsModel.findOne({ _id: id, isActive: true });
 
     res.json({
       data,
@@ -36,10 +37,8 @@ export const getBlog = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -51,10 +50,11 @@ export const getBlog = async (req, res) => {
 export const postBlog = async (req, res) => {
   const { body } = req;
 
-  const newProduct = new BlogsDb({
+  const newProduct = new BlogsModel({
     title: body.title,
     'image-url': body['image-url'],
     content: body.content,
+    isActive: true,
   });
 
   try {
@@ -63,10 +63,8 @@ export const postBlog = async (req, res) => {
     res.json({ data: null, message: 'Blog creado exitosamente' });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -83,12 +81,10 @@ export const putBlog = async (req, res) => {
   } = req;
 
   try {
-    // filter,newData,options
-    const action = await BlogsDb.updateOne({ _id: id }, body, {
-      new: true,
-    });
+    // filter,newData
+    const action = await BlogsModel.updateOne({ _id: id }, body);
 
-    if (action.matchedCount === 0) {
+    if (action.modifiedCount === 0) {
       res.status(404).json({ data: null, message: 'Blog no encontrado' });
       return;
     }
@@ -96,7 +92,8 @@ export const putBlog = async (req, res) => {
     res.json({ data: null, message: 'Blog actualizado' });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -111,9 +108,9 @@ export const deleteBlog = async (req, res) => {
   } = req;
 
   try {
-    const action = await BlogsDb.deleteOne({ _id: id });
+    const action = await BlogsModel.updateOne({ _id: id, isActive: true }, { isActive: false });
 
-    if (action.matchedCount === 0) {
+    if (action.modifiedCount === 0) {
       res.status(404).json({ data: null, message: 'Blog no encontrado' });
       return;
     }
@@ -121,7 +118,8 @@ export const deleteBlog = async (req, res) => {
     res.json({ data: null, message: 'Blog eliminado' });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };

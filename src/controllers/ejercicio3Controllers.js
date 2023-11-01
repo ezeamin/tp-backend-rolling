@@ -1,4 +1,4 @@
-import ColorsDb from '../models/ColorSchema.js';
+import ColorsModel from '../models/ColorSchema.js';
 
 // ----------------------------
 // GET
@@ -7,7 +7,7 @@ import ColorsDb from '../models/ColorSchema.js';
 // El "_" es un parámetro que no se usa (sería el req), pero que se pone para que no de error
 export const getColors = async (_, res) => {
   try {
-    const data = await ColorsDb.find();
+    const data = await ColorsModel.find({ isActive: true });
 
     // Devolvemos un objeto con la data para que siempre sea un objeto lo que viaja al FE
     res.json({
@@ -16,7 +16,8 @@ export const getColors = async (_, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -28,7 +29,7 @@ export const getColor = async (req, res) => {
   } = req;
 
   try {
-    const data = await ColorsDb.findOne({ _id: id });
+    const data = await ColorsModel.findOne({ _id: id, isActive: true });
 
     res.json({
       data,
@@ -36,10 +37,8 @@ export const getColor = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -51,10 +50,11 @@ export const getColor = async (req, res) => {
 export const postColor = async (req, res) => {
   const { body } = req;
 
-  const newProduct = new ColorsDb({
+  const newProduct = new ColorsModel({
     name: body.name,
     hex: body.hex,
     rgb: body.rgb,
+    isActive: true,
   });
 
   try {
@@ -63,10 +63,8 @@ export const postColor = async (req, res) => {
     res.json({ data: null, message: 'Color creado exitosamente' });
   } catch (err) {
     res.status(500).json({
-      errors: {
-        data: null,
-        message: `ERROR: ${err}`,
-      },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -83,12 +81,10 @@ export const putColor = async (req, res) => {
   } = req;
 
   try {
-    // filter,newData,options
-    const action = await ColorsDb.updateOne({ _id: id }, body, {
-      new: true,
-    });
+    // filter,newData
+    const action = await ColorsModel.updateOne({ _id: id }, body);
 
-    if (action.matchedCount === 0) {
+    if (action.modifiedCount === 0) {
       res.status(404).json({ data: null, message: 'Color no encontrado' });
       return;
     }
@@ -96,7 +92,8 @@ export const putColor = async (req, res) => {
     res.json({ data: null, message: 'Color actualizado' });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };
@@ -111,9 +108,12 @@ export const deleteColor = async (req, res) => {
   } = req;
 
   try {
-    const action = await ColorsDb.deleteOne({ _id: id });
+    const action = await ColorsModel.updateOne(
+      { _id: id, isActive: true },
+      { isActive: false },
+    );
 
-    if (action.matchedCount === 0) {
+    if (action.modifiedCount === 0) {
       res.status(404).json({ data: null, message: 'Color no encontrado' });
       return;
     }
@@ -121,7 +121,8 @@ export const deleteColor = async (req, res) => {
     res.json({ data: null, message: 'Color eliminado' });
   } catch (err) {
     res.status(500).json({
-      errors: { data: null, message: `ERROR: ${err}` },
+      data: null,
+      message: `ERROR: ${err}`,
     });
   }
 };

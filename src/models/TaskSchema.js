@@ -5,6 +5,7 @@ const taskSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isActive: Boolean,
 });
 
 export default mongoose.model('Tasks', taskSchema);
